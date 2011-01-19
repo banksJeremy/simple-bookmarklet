@@ -1,4 +1,24 @@
-javascript:void(function(){ try {
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>Simple Bookmarklet</title>
+    <style>
+      body { font-family: sans-serif; }
+      #linkContainer { margin: 1em; }
+      a { padding: .25em .5em; border: 1px solid #444; background: #EEE; }
+      a, a:active, a:visited, a:hover {
+        color: black;
+        text-decoration: none;
+      }
+    </style>
+    <script src="js/codemirror.js" type="text/javascript"></script>
+    <script src="js/mirrorframe.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div>
+      <textarea id="code" cols="120" rows="30">
+try {
   var settings = {
     /* all optional, attempted in this order: url, cookies, function, form */
     
@@ -9,7 +29,7 @@ javascript:void(function(){ try {
     },
     
     form: {
-      /* identify using name, id or function */
+      /* identify using id, unique name or function */
       id: "login_login",
       
       values: {
@@ -67,4 +87,40 @@ javascript:void(function(){ try {
   if (settings.function) {
     settings.function();
   };
-} catch (error) { alert(String(error)); }}())
+} catch (error) { alert(String(error)); }
+</textarea>
+    </div>
+    
+    <script type="text/javascript">
+      var mirror = CodeMirror.fromTextArea("code", {
+        height: "350px",
+        parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
+        stylesheet: "css/jscolors.css",
+        path: "js/",
+        autoMatchParens: true,
+        height: "dynamic"
+      });
+  
+      var container = document.createElement("div");
+      container.id = "linkContainer";
+      var link = document.createElement("a");
+  
+      link.innerText = "[Bookmarklet]";
+      link.id = "link";
+  
+      link.onmouseover = function() {
+        link.href = "javascript:void(function(){" + mirror.getCode() + "}())";
+      };
+  
+      link.onclick = function() {
+        alert("Don't click me, drag me to your bookmarks!")
+    
+        return false;
+      };
+  
+      container.appendChild(link);
+  
+      document.body.insertBefore(container, document.body.childNodes[0]);
+    </script>
+  </body>
+</html>
